@@ -6,7 +6,7 @@ package s3web
 import (
 	"errors"
 	"github.com/stretchr/testify/assert"
-	"github.com/titan-data/remote-sdk-go/remote"
+	"github.com/datadatdat/remote-sdk-go/remote"
 	"io/ioutil"
 	"net/http"
 	"strings"
