@@ -14,23 +14,7 @@ import (
 )
 
 const testMetadata = `
-{"id": "one", "properties": {"timestamp": "2019-09-	httpGet	httpGet = func(_ string) (resp *http.Response, err error) {
-		return &http.Response{
-			StatusCode: http.StatusOK,
-			Body:       io.NopCloser(strings.NewReader(metadata)),
-		}, nil
-	}
-	r := remote.Get("s3web")
-
-	commits, err := r.ListCommits(map[string]interface{}{"url": "http://host/path"}, map[string]interface{}{}, string) (resp *http.Response, err error) {
-		return &http.Response{
-			StatusCode: http.StatusOK,
-			Body:       io.NopCloser(strings.NewReader(metadata)),
-		}, nil
-	}
-	r := remote.Get("s3web")
-
-	commits, err := r.ListCommits(map[string]interface{}{"url": "http://host/path"}, map[string]interface{}{},36Z"}}
+{"id": "one", "properties": {"timestamp": "2019-09-20T13:45:36Z"}}
 {"id": "two", "properties": {"timestamp": "2019-09-20T13:45:37Z"}}`
 
 func TestRegistered(t *testing.T) {
