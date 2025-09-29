@@ -1,3 +1,4 @@
+// Package main provides the s3web remote server executable.
 package main
 
 import "github.com/datadatdat/remote-sdk-go/remote"
