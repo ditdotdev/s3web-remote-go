@@ -108,7 +108,7 @@ func (s s3webRemote) ListCommits(properties map[string]interface{}, _ map[string
 
 			err = json.Unmarshal([]byte(line), &commit)
 			if err == nil && commit.Properties != nil && commit.ID != "" && remote.MatchTags(commit.Properties, tags) {
-				ret = append(ret, remote.Commit{Id: commit.ID, Properties: commit.Properties})
+				ret = append(ret, remote.Commit{ID: commit.ID, Properties: commit.Properties})
 			}
 		}
 	}
@@ -125,7 +125,7 @@ func (s s3webRemote) GetCommit(properties map[string]interface{}, parameters map
 	}
 
 	for _, c := range commits {
-		if c.Id == commitID {
+		if c.ID == commitID {
 			return &c, nil
 		}
 	}

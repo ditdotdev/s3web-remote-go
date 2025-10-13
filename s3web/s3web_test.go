@@ -220,8 +220,8 @@ func TestListCommits(t *testing.T) {
 	commits, err := r.ListCommits(map[string]interface{}{"bucket": "bucket", "path": "path"}, map[string]interface{}{}, []remote.Tag{})
 	if assert.NoError(t, err) {
 		assert.Len(t, commits, 2)
-		assert.Equal(t, "two", commits[0].Id)
-		assert.Equal(t, "one", commits[1].Id)
+		assert.Equal(t, "two", commits[0].ID)
+		assert.Equal(t, "one", commits[1].ID)
 	}
 
 	httpGet = http.Get
@@ -242,7 +242,7 @@ foo
 	commits, err := r.ListCommits(map[string]interface{}{"bucket": "bucket", "path": "path"}, map[string]interface{}{}, []remote.Tag{})
 	if assert.NoError(t, err) {
 		assert.Len(t, commits, 1)
-		assert.Equal(t, "two", commits[0].Id)
+		assert.Equal(t, "two", commits[0].ID)
 	}
 
 	httpGet = http.Get
@@ -263,7 +263,7 @@ func TestListCommitsTags(t *testing.T) {
 	commits, err := r.ListCommits(map[string]interface{}{"bucket": "bucket", "path": "path"}, map[string]interface{}{}, []remote.Tag{{Key: "a"}})
 	if assert.NoError(t, err) {
 		assert.Len(t, commits, 1)
-		assert.Equal(t, "one", commits[0].Id)
+		assert.Equal(t, "one", commits[0].ID)
 	}
 
 	httpGet = http.Get
@@ -295,7 +295,7 @@ func TestGetCommit(t *testing.T) {
 
 	commit, err := r.GetCommit(map[string]interface{}{"bucket": "bucket", "path": "path"}, map[string]interface{}{}, "one")
 	if assert.NoError(t, err) {
-		assert.Equal(t, "one", commit.Id)
+		assert.Equal(t, "one", commit.ID)
 		assert.Equal(t, "2019-09-20T13:45:36Z", commit.Properties["timestamp"])
 	}
 
