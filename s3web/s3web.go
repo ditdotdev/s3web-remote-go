@@ -1,8 +1,8 @@
 /*
- * Copyright The Titan Project Contributors.
+ * Copyright Datadatdat.
  */
 
-// Package s3web provides an S3-compatible web interface remote storage backend for Titan.
+// Package s3web provides an S3-compatible web interface remote storage backend for Datadatdat.
 package s3web
 
 import (
@@ -78,7 +78,7 @@ type MetadataCommit struct {
 }
 
 func (s s3webRemote) ListCommits(properties map[string]interface{}, _ map[string]interface{}, tags []remote.Tag) ([]remote.Commit, error) {
-	metadataPath := fmt.Sprintf("%s/%s", properties["url"], "titan")
+	metadataPath := fmt.Sprintf("%s/%s", properties["url"], "Datadatdat")
 
 	resp, err := httpGet(metadataPath)
 	if err != nil {
