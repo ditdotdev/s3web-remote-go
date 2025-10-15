@@ -10,12 +10,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/datadatdat/remote-sdk-go/remote"
 	"io"
 	"net/http"
 	"net/url"
 	"reflect"
 	"strings"
+
+	"github.com/datadatdat/remote-sdk-go/remote"
 )
 
 type s3webRemote struct {
@@ -78,7 +79,7 @@ type MetadataCommit struct {
 }
 
 func (s s3webRemote) ListCommits(properties map[string]interface{}, _ map[string]interface{}, tags []remote.Tag) ([]remote.Commit, error) {
-	metadataPath := fmt.Sprintf("%s/%s", properties["url"], "Datadatdat")
+	metadataPath := fmt.Sprintf("%s/%s", properties["url"], "datadatdat")
 
 	resp, err := httpGet(metadataPath)
 	if err != nil {
