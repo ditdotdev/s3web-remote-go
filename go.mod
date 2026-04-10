@@ -1,7 +1,7 @@
 module github.com/datadatdat/s3web-remote-go
 
 require (
-	github.com/datadatdat/remote-sdk-go v1.8.3
+	github.com/datadatdat/remote-sdk-go v1.8.4
 	github.com/stretchr/testify v1.11.1
 )
 
