@@ -131,7 +131,7 @@ func (s s3webRemote) GetCommit(properties map[string]interface{}, parameters map
 		}
 	}
 
-	return nil, nil
+	return nil, fmt.Errorf("commit %s not found in remote", commitID)
 }
 
 func init() {
