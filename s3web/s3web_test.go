@@ -313,9 +313,8 @@ func TestGetMissingCommit(t *testing.T) {
 	r := remote.Get("s3web")
 
 	commit, err := r.GetCommit(map[string]interface{}{"bucket": "bucket", "path": "path"}, map[string]interface{}{}, "three")
-	if assert.NoError(t, err) {
-		assert.Nil(t, commit)
-	}
+	assert.Nil(t, commit)
+	assert.Error(t, err, "GetCommit must return an error when the requested commit ID is not in the metadata")
 
 	httpGet = http.Get
 }
