@@ -17,6 +17,12 @@ const testMetadata = `
 {"id": "one", "properties": {"timestamp": "2019-09-20T13:45:36Z"}}
 {"id": "two", "properties": {"timestamp": "2019-09-20T13:45:37Z"}}`
 
+const (
+	testURL    = "http://host/path"
+	testBucket = "bucket"
+	testPath   = "path"
+)
+
 func TestRegistered(t *testing.T) {
 	r := remote.Get("s3web")
 
@@ -31,7 +37,7 @@ func TestFromURL(t *testing.T) {
 
 	props, err := r.FromURL("s3web://host/object/path", map[string]string{})
 	if assert.NoError(t, err) {
-		assert.Equal(t, "http://host/object/path", props["url"])
+		assert.Equal(t, "http://host/object/path", props[propURL])
 	}
 }
 
@@ -40,7 +46,7 @@ func TestNoPath(t *testing.T) {
 
 	props, err := r.FromURL("s3web://host", map[string]string{})
 	if assert.NoError(t, err) {
-		assert.Equal(t, "http://host", props["url"])
+		assert.Equal(t, "http://host", props[propURL])
 	}
 }
 
@@ -91,14 +97,14 @@ func TestPort(t *testing.T) {
 
 	props, err := r.FromURL("s3web://host:1023/object/path", map[string]string{})
 	if assert.NoError(t, err) {
-		assert.Equal(t, "http://host:1023/object/path", props["url"])
+		assert.Equal(t, "http://host:1023/object/path", props[propURL])
 	}
 }
 
 func TestToURL(t *testing.T) {
 	r := remote.Get("s3web")
 
-	u, props, err := r.ToURL(map[string]interface{}{"url": "http://host/path"})
+	u, props, err := r.ToURL(map[string]interface{}{propURL: testURL})
 	if assert.NoError(t, err) {
 		assert.Equal(t, "s3web://host/path", u)
 		assert.Empty(t, props)
@@ -108,7 +114,7 @@ func TestToURL(t *testing.T) {
 func TestParameters(t *testing.T) {
 	r := remote.Get("s3web")
 
-	props, err := r.GetParameters(map[string]interface{}{"url": "http://host/path"})
+	props, err := r.GetParameters(map[string]interface{}{propURL: testURL})
 	if assert.NoError(t, err) {
 		assert.Empty(t, props)
 	}
@@ -116,7 +122,7 @@ func TestParameters(t *testing.T) {
 
 func TestValidateRemoteRequired(t *testing.T) {
 	r := remote.Get("s3web")
-	err := r.ValidateRemote(map[string]interface{}{"url": "url"})
+	err := r.ValidateRemote(map[string]interface{}{propURL: propURL})
 	assert.NoError(t, err)
 }
 
@@ -128,7 +134,7 @@ func TestValidateRemoteMissingRequired(t *testing.T) {
 
 func TestValidateRemoteInvalid(t *testing.T) {
 	r := remote.Get("s3web")
-	err := r.ValidateRemote(map[string]interface{}{"url": "url", "foo": "bar"})
+	err := r.ValidateRemote(map[string]interface{}{propURL: propURL, "foo": "bar"})
 	assert.Error(t, err)
 }
 
@@ -149,7 +155,7 @@ func TestListCommitsBadGet(t *testing.T) {
 		return nil, errors.New("error")
 	}
 	r := remote.Get("s3web")
-	_, err := r.ListCommits(map[string]interface{}{"url": "http://host/path"}, map[string]interface{}{},
+	_, err := r.ListCommits(map[string]interface{}{propURL: testURL}, map[string]interface{}{},
 		[]remote.Tag{})
 	assert.Error(t, err)
 
@@ -162,7 +168,7 @@ func TestListCommitsNotFound(t *testing.T) {
 	}
 	r := remote.Get("s3web")
 
-	commits, err := r.ListCommits(map[string]interface{}{"url": "http://host/path"}, map[string]interface{}{},
+	commits, err := r.ListCommits(map[string]interface{}{propURL: testURL}, map[string]interface{}{},
 		[]remote.Tag{})
 	if assert.NoError(t, err) {
 		assert.Len(t, commits, 0)
@@ -179,7 +185,7 @@ func TestListCommitsOtherError(t *testing.T) {
 		}, nil
 	}
 	r := remote.Get("s3web")
-	_, err := r.ListCommits(map[string]interface{}{"url": "http://host/path"}, map[string]interface{}{},
+	_, err := r.ListCommits(map[string]interface{}{propURL: testURL}, map[string]interface{}{},
 		[]remote.Tag{})
 	assert.Error(t, err)
 
@@ -200,7 +206,7 @@ func TestListCommitsErrorReadError(t *testing.T) {
 		}, nil
 	}
 	r := remote.Get("s3web")
-	_, err := r.ListCommits(map[string]interface{}{"url": "http://host/path"}, map[string]interface{}{},
+	_, err := r.ListCommits(map[string]interface{}{propURL: testURL}, map[string]interface{}{},
 		[]remote.Tag{})
 	assert.Error(t, err)
 
@@ -217,7 +223,7 @@ func TestListCommits(t *testing.T) {
 	}
 	r := remote.Get("s3web")
 
-	commits, err := r.ListCommits(map[string]interface{}{"bucket": "bucket", "path": "path"}, map[string]interface{}{}, []remote.Tag{})
+	commits, err := r.ListCommits(map[string]interface{}{testBucket: testBucket, testPath: testPath}, map[string]interface{}{}, []remote.Tag{})
 	if assert.NoError(t, err) {
 		assert.Len(t, commits, 2)
 		assert.Equal(t, "two", commits[0].ID)
@@ -239,7 +245,7 @@ foo
 	}
 	r := remote.Get("s3web")
 
-	commits, err := r.ListCommits(map[string]interface{}{"bucket": "bucket", "path": "path"}, map[string]interface{}{}, []remote.Tag{})
+	commits, err := r.ListCommits(map[string]interface{}{testBucket: testBucket, testPath: testPath}, map[string]interface{}{}, []remote.Tag{})
 	if assert.NoError(t, err) {
 		assert.Len(t, commits, 1)
 		assert.Equal(t, "two", commits[0].ID)
@@ -260,7 +266,7 @@ func TestListCommitsTags(t *testing.T) {
 	}
 	r := remote.Get("s3web")
 
-	commits, err := r.ListCommits(map[string]interface{}{"bucket": "bucket", "path": "path"}, map[string]interface{}{}, []remote.Tag{{Key: "a"}})
+	commits, err := r.ListCommits(map[string]interface{}{testBucket: testBucket, testPath: testPath}, map[string]interface{}{}, []remote.Tag{{Key: "a"}})
 	if assert.NoError(t, err) {
 		assert.Len(t, commits, 1)
 		assert.Equal(t, "one", commits[0].ID)
@@ -277,7 +283,7 @@ func TestGetCommitError(t *testing.T) {
 		}, nil
 	}
 	r := remote.Get("s3web")
-	_, err := r.GetCommit(map[string]interface{}{"url": "http://host/path"}, map[string]interface{}{}, "id")
+	_, err := r.GetCommit(map[string]interface{}{propURL: testURL}, map[string]interface{}{}, "id")
 	assert.Error(t, err)
 
 	httpGet = http.Get
@@ -293,7 +299,7 @@ func TestGetCommit(t *testing.T) {
 	}
 	r := remote.Get("s3web")
 
-	commit, err := r.GetCommit(map[string]interface{}{"bucket": "bucket", "path": "path"}, map[string]interface{}{}, "one")
+	commit, err := r.GetCommit(map[string]interface{}{testBucket: testBucket, testPath: testPath}, map[string]interface{}{}, "one")
 	if assert.NoError(t, err) {
 		assert.Equal(t, "one", commit.ID)
 		assert.Equal(t, "2019-09-20T13:45:36Z", commit.Properties["timestamp"])
@@ -312,7 +318,7 @@ func TestGetMissingCommit(t *testing.T) {
 	}
 	r := remote.Get("s3web")
 
-	commit, err := r.GetCommit(map[string]interface{}{"bucket": "bucket", "path": "path"}, map[string]interface{}{}, "three")
+	commit, err := r.GetCommit(map[string]interface{}{testBucket: testBucket, testPath: testPath}, map[string]interface{}{}, "three")
 	assert.Nil(t, commit)
 	assert.Error(t, err, "GetCommit must return an error when the requested commit ID is not in the metadata")
 
