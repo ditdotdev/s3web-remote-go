@@ -19,6 +19,8 @@ import (
 	"github.com/datadatdat/remote-sdk-go/remote"
 )
 
+const propURL = "url"
+
 type s3webRemote struct {
 }
 
@@ -50,11 +52,11 @@ func (s s3webRemote) FromURL(rawURL string, additionalProperties map[string]stri
 
 	res := fmt.Sprintf("http://%s%s", u.Host, u.Path)
 
-	return map[string]interface{}{"url": res}, nil
+	return map[string]interface{}{propURL: res}, nil
 }
 
 func (s s3webRemote) ToURL(properties map[string]interface{}) (string, map[string]string, error) {
-	u := properties["url"].(string)
+	u := properties[propURL].(string)
 	return strings.Replace(u, "http", "s3web", 1), map[string]string{}, nil
 }
 
@@ -63,7 +65,7 @@ func (s s3webRemote) GetParameters(_ map[string]interface{}) (map[string]interfa
 }
 
 func (s s3webRemote) ValidateRemote(properties map[string]interface{}) error {
-	return remote.ValidateFields(properties, []string{"url"}, []string{})
+	return remote.ValidateFields(properties, []string{propURL}, []string{})
 }
 
 func (s s3webRemote) ValidateParameters(parameters map[string]interface{}) error {
@@ -79,7 +81,7 @@ type MetadataCommit struct {
 }
 
 func (s s3webRemote) ListCommits(properties map[string]interface{}, _ map[string]interface{}, tags []remote.Tag) ([]remote.Commit, error) {
-	metadataPath := fmt.Sprintf("%s/%s", properties["url"], "datadatdat")
+	metadataPath := fmt.Sprintf("%s/%s", properties[propURL], "datadatdat")
 
 	resp, err := httpGet(metadataPath)
 	if err != nil {
