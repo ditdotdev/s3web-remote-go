@@ -13,13 +13,19 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"reflect"
 	"strings"
+	"time"
 
 	"github.com/datadatdat/remote-sdk-go/remote"
 )
 
-const propURL = "url"
+const (
+	propURL   = "url"
+	userAgent = "datadatdat-s3web-remote-go"
+	// httpTimeout bounds the time a single HTTP request can take so a hung
+	// S3-website endpoint cannot block a plugin operation indefinitely.
+	httpTimeout = 30 * time.Second
+)
 
 type s3webRemote struct {
 }
@@ -47,7 +53,9 @@ func (s s3webRemote) FromURL(rawURL string, additionalProperties map[string]stri
 	}
 
 	if len(additionalProperties) != 0 {
-		return nil, fmt.Errorf("invalid property '%s'", reflect.ValueOf(additionalProperties).MapKeys()[0].String())
+		for k := range additionalProperties {
+			return nil, fmt.Errorf("invalid property '%s'", k)
+		}
 	}
 
 	res := fmt.Sprintf("http://%s%s", u.Host, u.Path)
@@ -56,7 +64,10 @@ func (s s3webRemote) FromURL(rawURL string, additionalProperties map[string]stri
 }
 
 func (s s3webRemote) ToURL(properties map[string]interface{}) (string, map[string]string, error) {
-	u := properties[propURL].(string)
+	u, ok := properties[propURL].(string)
+	if !ok {
+		return "", nil, fmt.Errorf("missing or invalid property '%s'", propURL)
+	}
 	return strings.Replace(u, "http", "s3web", 1), map[string]string{}, nil
 }
 
@@ -72,7 +83,21 @@ func (s s3webRemote) ValidateParameters(parameters map[string]interface{}) error
 	return remote.ValidateFields(parameters, []string{}, []string{})
 }
 
-var httpGet = http.Get
+// httpClient is the http.Client used by httpGet. The explicit timeout prevents
+// a slow or hung remote endpoint from blocking a plugin operation indefinitely.
+var httpClient = &http.Client{Timeout: httpTimeout}
+
+// httpGet issues a GET request via httpClient with a User-Agent header set so
+// the request is identifiable in server logs. It is a package-level variable
+// so tests can swap in a mock implementation.
+var httpGet = func(rawURL string) (*http.Response, error) {
+	req, err := http.NewRequest(http.MethodGet, rawURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("User-Agent", userAgent)
+	return httpClient.Do(req)
+}
 
 // MetadataCommit represents a commit metadata structure from the S3 web interface.
 type MetadataCommit struct {
@@ -87,6 +112,7 @@ func (s s3webRemote) ListCommits(properties map[string]interface{}, _ map[string
 	if err != nil {
 		return nil, err
 	}
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == http.StatusNotFound {
 		return []remote.Commit{}, nil
@@ -114,6 +140,9 @@ func (s s3webRemote) ListCommits(properties map[string]interface{}, _ map[string
 				ret = append(ret, remote.Commit{ID: commit.ID, Properties: commit.Properties})
 			}
 		}
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, fmt.Errorf("failed to read commit metadata from '%s': %w", metadataPath, err)
 	}
 
 	remote.SortCommits(ret)
