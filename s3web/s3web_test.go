@@ -24,7 +24,7 @@ const (
 )
 
 func TestRegistered(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 
 	ret, err := r.Type()
 	if assert.NoError(t, err) {
@@ -33,7 +33,7 @@ func TestRegistered(t *testing.T) {
 }
 
 func TestFromURL(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 
 	props, err := r.FromURL("s3web://host/object/path", map[string]string{})
 	if assert.NoError(t, err) {
@@ -42,7 +42,7 @@ func TestFromURL(t *testing.T) {
 }
 
 func TestNoPath(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 
 	props, err := r.FromURL("s3web://host", map[string]string{})
 	if assert.NoError(t, err) {
@@ -51,49 +51,49 @@ func TestNoPath(t *testing.T) {
 }
 
 func TestBadProperty(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	_, err := r.FromURL("s3web://host", map[string]string{"a": "b"})
 	assert.Error(t, err)
 }
 
 func TestBadUrl(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	_, err := r.FromURL("s3web://not\nhost", map[string]string{})
 	assert.Error(t, err)
 }
 
 func TestBadScheme(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	_, err := r.FromURL("s3web", map[string]string{})
 	assert.Error(t, err)
 }
 
 func TestBadSchemeName(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	_, err := r.FromURL("foo://bar", map[string]string{})
 	assert.Error(t, err)
 }
 
 func TestBadUser(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	_, err := r.FromURL("s3web://user@host/path", map[string]string{})
 	assert.Error(t, err)
 }
 
 func TestBadUserPassword(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	_, err := r.FromURL("s3web://user:password@host/path", map[string]string{})
 	assert.Error(t, err)
 }
 
 func TestBadNoHost(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	_, err := r.FromURL("s3web:///path", map[string]string{})
 	assert.Error(t, err)
 }
 
 func TestPort(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 
 	props, err := r.FromURL("s3web://host:1023/object/path", map[string]string{})
 	if assert.NoError(t, err) {
@@ -102,7 +102,7 @@ func TestPort(t *testing.T) {
 }
 
 func TestToURL(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 
 	u, props, err := r.ToURL(map[string]interface{}{propURL: testURL})
 	if assert.NoError(t, err) {
@@ -112,7 +112,7 @@ func TestToURL(t *testing.T) {
 }
 
 func TestParameters(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 
 	props, err := r.GetParameters(map[string]interface{}{propURL: testURL})
 	if assert.NoError(t, err) {
@@ -121,31 +121,31 @@ func TestParameters(t *testing.T) {
 }
 
 func TestValidateRemoteRequired(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	err := r.ValidateRemote(map[string]interface{}{propURL: propURL})
 	assert.NoError(t, err)
 }
 
 func TestValidateRemoteMissingRequired(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	err := r.ValidateRemote(map[string]interface{}{})
 	assert.Error(t, err)
 }
 
 func TestValidateRemoteInvalid(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	err := r.ValidateRemote(map[string]interface{}{propURL: propURL, "foo": "bar"})
 	assert.Error(t, err)
 }
 
 func TestValidateParametersEmpty(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	err := r.ValidateParameters(map[string]interface{}{})
 	assert.NoError(t, err)
 }
 
 func TestValidateParametersInvalid(t *testing.T) {
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	err := r.ValidateParameters(map[string]interface{}{"foo": "bar"})
 	assert.Error(t, err)
 }
@@ -154,7 +154,7 @@ func TestListCommitsBadGet(t *testing.T) {
 	httpGet = func(_ string) (resp *http.Response, err error) {
 		return nil, errors.New("error")
 	}
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	_, err := r.ListCommits(map[string]interface{}{propURL: testURL}, map[string]interface{}{},
 		[]remote.Tag{})
 	assert.Error(t, err)
@@ -166,7 +166,7 @@ func TestListCommitsNotFound(t *testing.T) {
 	httpGet = func(_ string) (resp *http.Response, err error) {
 		return &http.Response{StatusCode: http.StatusNotFound}, nil
 	}
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 
 	commits, err := r.ListCommits(map[string]interface{}{propURL: testURL}, map[string]interface{}{},
 		[]remote.Tag{})
@@ -184,7 +184,7 @@ func TestListCommitsOtherError(t *testing.T) {
 			Body:       io.NopCloser(strings.NewReader("bad request")),
 		}, nil
 	}
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	_, err := r.ListCommits(map[string]interface{}{propURL: testURL}, map[string]interface{}{},
 		[]remote.Tag{})
 	assert.Error(t, err)
@@ -205,7 +205,7 @@ func TestListCommitsErrorReadError(t *testing.T) {
 			Body:       io.NopCloser(errReader(0)),
 		}, nil
 	}
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	_, err := r.ListCommits(map[string]interface{}{propURL: testURL}, map[string]interface{}{},
 		[]remote.Tag{})
 	assert.Error(t, err)
@@ -221,7 +221,7 @@ func TestListCommits(t *testing.T) {
 			Body:       io.NopCloser(strings.NewReader(metadata)),
 		}, nil
 	}
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 
 	commits, err := r.ListCommits(map[string]interface{}{testBucket: testBucket, testPath: testPath}, map[string]interface{}{}, []remote.Tag{})
 	if assert.NoError(t, err) {
@@ -243,7 +243,7 @@ foo
 			Body:       io.NopCloser(strings.NewReader(metadata)),
 		}, nil
 	}
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 
 	commits, err := r.ListCommits(map[string]interface{}{testBucket: testBucket, testPath: testPath}, map[string]interface{}{}, []remote.Tag{})
 	if assert.NoError(t, err) {
@@ -264,7 +264,7 @@ func TestListCommitsTags(t *testing.T) {
 			Body:       io.NopCloser(strings.NewReader(metadata)),
 		}, nil
 	}
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 
 	commits, err := r.ListCommits(map[string]interface{}{testBucket: testBucket, testPath: testPath}, map[string]interface{}{}, []remote.Tag{{Key: "a"}})
 	if assert.NoError(t, err) {
@@ -282,7 +282,7 @@ func TestGetCommitError(t *testing.T) {
 			Body:       io.NopCloser(strings.NewReader("bad request")),
 		}, nil
 	}
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 	_, err := r.GetCommit(map[string]interface{}{propURL: testURL}, map[string]interface{}{}, "id")
 	assert.Error(t, err)
 
@@ -297,7 +297,7 @@ func TestGetCommit(t *testing.T) {
 			Body:       io.NopCloser(strings.NewReader(metadata)),
 		}, nil
 	}
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 
 	commit, err := r.GetCommit(map[string]interface{}{testBucket: testBucket, testPath: testPath}, map[string]interface{}{}, "one")
 	if assert.NoError(t, err) {
@@ -316,7 +316,7 @@ func TestGetMissingCommit(t *testing.T) {
 			Body:       io.NopCloser(strings.NewReader(metadata)),
 		}, nil
 	}
-	r := remote.Get("s3web")
+	r, _ := remote.Get("s3web")
 
 	commit, err := r.GetCommit(map[string]interface{}{testBucket: testBucket, testPath: testPath}, map[string]interface{}{}, "three")
 	assert.Nil(t, commit)
