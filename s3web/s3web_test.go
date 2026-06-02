@@ -1,5 +1,5 @@
 /*
- * Copyright Datadatdat.
+ * Copyright Dit.
  */
 package s3web
 
@@ -12,7 +12,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/datadatdat/remote-sdk-go/remote"
+	"github.com/ditdotdev/remote-sdk-go/remote"
 	"github.com/stretchr/testify/assert"
 )
 
