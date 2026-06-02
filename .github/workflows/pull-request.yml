@@ -26,12 +26,12 @@ jobs:
       - name: Build
         run: go build -v ./...
         env:
-          GOPRIVATE: github.com/datadatdat/*
+          GOPRIVATE: github.com/ditdotdev/*
       - name: Build Command
         run: go build -o build/s3web ./cmd/s3web
         env:
-          GOPRIVATE: github.com/datadatdat/*
+          GOPRIVATE: github.com/ditdotdev/*
       - name: Test
         run: go test -v ./...
         env:
-          GOPRIVATE: github.com/datadatdat/*
+          GOPRIVATE: github.com/ditdotdev/*

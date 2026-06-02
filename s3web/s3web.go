@@ -1,8 +1,8 @@
 /*
- * Copyright Datadatdat.
+ * Copyright Dit.
  */
 
-// Package s3web provides an S3-compatible web interface remote storage backend for Datadatdat.
+// Package s3web provides an S3-compatible web interface remote storage backend for Dit.
 package s3web
 
 import (
@@ -16,12 +16,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/datadatdat/remote-sdk-go/remote"
+	"github.com/ditdotdev/remote-sdk-go/remote"
 )
 
 const (
 	propURL   = "url"
-	userAgent = "datadatdat-s3web-remote-go"
+	userAgent = "dit-s3web-remote-go"
 	// httpTimeout bounds the time a single HTTP request can take so a hung
 	// S3-website endpoint cannot block a plugin operation indefinitely.
 	httpTimeout = 30 * time.Second
@@ -106,7 +106,7 @@ type MetadataCommit struct {
 }
 
 func (s s3webRemote) ListCommits(properties map[string]interface{}, _ map[string]interface{}, tags []remote.Tag) ([]remote.Commit, error) {
-	metadataPath := fmt.Sprintf("%s/%s", properties[propURL], "datadatdat")
+	metadataPath := fmt.Sprintf("%s/%s", properties[propURL], "dit")
 
 	resp, err := httpGet(metadataPath)
 	if err != nil {
