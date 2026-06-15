@@ -1,7 +1,7 @@
 module github.com/ditdotdev/s3web-remote-go
 
 require (
-	github.com/ditdotdev/remote-sdk-go v1.9.7
+	github.com/ditdotdev/remote-sdk-go v1.9.8
 	github.com/stretchr/testify v1.11.1
 )
 
