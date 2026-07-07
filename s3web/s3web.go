@@ -1,6 +1,5 @@
-/*
- * Copyright Dit.
- */
+// Copyright Dit 2026
+// SPDX-License-Identifier: BUSL-1.1
 
 // Package s3web provides an S3-compatible web interface remote storage backend for Dit.
 package s3web
